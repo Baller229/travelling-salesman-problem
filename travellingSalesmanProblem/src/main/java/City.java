@@ -1,10 +1,10 @@
 public class City
 {
    String position;
-   int X;
-   int Y;
+   double X;
+   double Y;
 
-   public City(String position, int X, int Y)
+   public City(String position, double X, double Y)
    {
       this.position = position;
       this.X = X;
