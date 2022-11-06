@@ -1,21 +1,23 @@
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
 public class Genetic
 {
+   public static LinkedList<City> cities = new LinkedList<City>();
+   public static LinkedList<Path> paths = new LinkedList<Path> ();
+   public static LinkedList<Path> crossoverPaths = new LinkedList<Path> ();
+   public static LinkedList<Path> mutatedPaths = new LinkedList<Path> ();
+   public static LinkedList<Double> bestPaths = new LinkedList<Double> ();
    public static void geneticAlgorithm()
    {
       final int minCoord = 0;
       final int maxCoord = 200;
 
-      LinkedList<City> cities = new LinkedList<City>();
-      LinkedList<Path> paths = new LinkedList<Path> ();
-      LinkedList<Path> crossoverPaths = new LinkedList<Path> ();
-      LinkedList<Path> mutatedPaths = new LinkedList<Path> ();
 
-      //generate cities with coordinations
+
+
+   //generate cities with coordinations
       generateCities (cities, minCoord, maxCoord);
 
       // generate n random paths with path cost and sequence of cities
@@ -24,7 +26,7 @@ public class Genetic
          generatePaths (cities, paths);
       }
       // store best path from generatedPaths
-      storeBestPath(paths);
+      bestPaths.add (storeBestPath(paths));
 
       //generate
       for(int i = 0; i < 50; i++)
@@ -47,8 +49,10 @@ public class Genetic
       }
    }
 
-   public static void generatePaths(LinkedList<City> cities, LinkedList<Path> paths)
+   public static void generatePaths(LinkedList<City> city, LinkedList<Path> paths)
    {
+      LinkedList<City> cities = new LinkedList<> ();
+      cities = (LinkedList) city.clone ();
       Path currentPath;
       // store start position, remove from list, shuffle, add start position to index 0
       // so start position will be on static place while other positions will be shuffled
@@ -91,6 +95,29 @@ public class Genetic
       return Math.sqrt( (double)( (diffX*diffX) + (diffY*diffY) ) );
    }
 
+   public static double totalPathCost(String sequence[])
+   {
+      double pathCost = 0;
+      City startCity = getCityfromIndex (0);
+      City currentCity;
+      City nextCity;
+      for(int i = 0; i < sequence.length; i++)
+      {
+         if ((i + 1) == sequence.length)
+         {
+            currentCity = getCityfromIndex (Integer.parseInt (sequence[i]));
+            pathCost += countPathCost (currentCity, startCity);
+         }
+         else
+         {
+            currentCity = getCityfromIndex (Integer.parseInt (sequence[i]));
+            nextCity = getCityfromIndex (Integer.parseInt (sequence[i+1]));
+            pathCost += countPathCost (currentCity, nextCity);
+         }
+      }
+      return pathCost;
+   }
+
    public static double storeBestPath(LinkedList<Path> path)
    {
      double min[] = new double[path.size ()];
@@ -108,12 +135,17 @@ public class Genetic
    {
       String[] parent1;
       String[] parent2;
+
+
       //get random parent
       parent1 = path.get ((int)(Math.random() * (path.size () - 1) + 1)).poradieMiest;
       parent2 =path.get ((int)(Math.random() * (path.size () - 1) + 1)).poradieMiest;
 
       String[] child = new String[parent1.length];
       crossOver(parent1, parent2, child, 5);
+
+      Path childs = new Path (child, totalPathCost (child));
+      crossover.add (childs);
 
    }
    public static void generateMutations(LinkedList<Path> path, LinkedList<Path> mutations)
@@ -123,6 +155,8 @@ public class Genetic
 
    public static void crossOver(String[] parent1, String[] parent2, String[] child, int pos)
    {
+      int x[];
+      int y[];
       String[] parentA = new String[parent1.length];
       String[] parentB = new String[parent2.length];
       memcpy (parent1, parentA);
@@ -155,10 +189,15 @@ public class Genetic
 
    }
 
-   public static void memcpy(String [] a, String[] b)
+   public static void memcpy(String a[], String b[])
    {
       // Copying elements of a[] to b[]
       for (int i = 0; i < a.length; i++)
          b[i] = a[i];
+   }
+
+   public static City getCityfromIndex(int index)
+   {
+      return cities.get (index);
    }
 }
