@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -14,27 +15,46 @@ public class Genetic
       final int minCoord = 0;
       final int maxCoord = 200;
 
-
-
-
    //generate cities with coordinations
       generateCities (cities, minCoord, maxCoord);
 
-      // generate n random paths with path cost and sequence of cities
+      // store best path from generatedPaths
+      //bestPaths.add (storeBestPath(paths));
+
+      for(int i = 0; i < 100000; i++)
+      {
+         generation();
+         System.out.println (i + ": Path cost: " + bestPaths.get (0));
+      }
+
+   }
+
+   public static void generation()
+   {
+
       for(int i = 0; i < 100; i++)
       {
          generatePaths (cities, paths);
       }
-      // store best path from generatedPaths
-      bestPaths.add (storeBestPath(paths));
-
       //generate
       for(int i = 0; i < 50; i++)
-      {
-         generateCrossover(paths, crossoverPaths);
-         //generateMutations (paths, mutatedPaths);
-      }
-
+         {
+            generateCrossover(paths, crossoverPaths);
+            generateMutations (paths, mutatedPaths);
+         }
+         bestPaths.add (storeBestPath(crossoverPaths));
+         bestPaths.add (storeBestPath(mutatedPaths));
+         Collections.sort (bestPaths);
+         Double best = bestPaths.getFirst ();
+         bestPaths = null;
+         bestPaths = new LinkedList<> ();
+         bestPaths.add (best);
+         crossoverPaths = null;
+         paths = null;
+         mutatedPaths = null;
+         crossoverPaths = new LinkedList<> ();
+         mutatedPaths = new LinkedList<> ();
+         paths = new LinkedList<> ();
    }
 
    public static void generateCities(LinkedList<City> cities, final int min, final int max)
@@ -142,7 +162,8 @@ public class Genetic
       parent2 =path.get ((int)(Math.random() * (path.size () - 1) + 1)).poradieMiest;
 
       String[] child = new String[parent1.length];
-      crossOver(parent1, parent2, child, 5);
+      int pos = (int)(Math.random() * (parent1.length - 1) + 1);
+      crossOver(parent1, parent2, child, pos);
 
       Path childs = new Path (child, totalPathCost (child));
       crossover.add (childs);
@@ -150,7 +171,12 @@ public class Genetic
    }
    public static void generateMutations(LinkedList<Path> path, LinkedList<Path> mutations)
    {
-
+      String parent [] = path.get ((int)(Math.random() * (path.size () - 1) + 1)).poradieMiest;
+      String child [] = new String[parent.length];
+      memcpy (parent, child);
+      memswap(child);
+      Path  childs = new Path (child, totalPathCost (child));
+      mutations.add (childs);
    }
 
    public static void crossOver(String[] parent1, String[] parent2, String[] child, int pos)
@@ -195,9 +221,20 @@ public class Genetic
       for (int i = 0; i < a.length; i++)
          b[i] = a[i];
    }
+   public static void memswap(String a[])
+   {
+      String temp;
+      int pos1 = (int)(Math.random() * (a.length - 1) + 1);
+      int pos2 = (int)(Math.random() * (a.length - 1) + 1);
+
+      temp = a[pos1];
+      a[pos1] = a[pos2];
+      a[pos2] = temp;
+   }
 
    public static City getCityfromIndex(int index)
    {
       return cities.get (index);
    }
+
 }
