@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -18,13 +19,19 @@ public class Genetic
       generateCities (cities, minCoord, maxCoord);
 
       // generate n random paths with path cost and sequence of cities
-      for(int i = 0; i < 20; i++)
+      for(int i = 0; i < 100; i++)
       {
          generatePaths (cities, paths);
       }
       // store best path from generatedPaths
       storeBestPath(paths);
 
+      //generate
+      for(int i = 0; i < 50; i++)
+      {
+         generateCrossover(paths, crossoverPaths);
+         //generateMutations (paths, mutatedPaths);
+      }
 
    }
 
@@ -95,5 +102,63 @@ public class Genetic
       }
       Arrays.sort (min);
       return min[0];
+   }
+
+   public static void generateCrossover(LinkedList<Path> path, LinkedList<Path> crossover)
+   {
+      String[] parent1;
+      String[] parent2;
+      //get random parent
+      parent1 = path.get ((int)(Math.random() * (path.size () - 1) + 1)).poradieMiest;
+      parent2 =path.get ((int)(Math.random() * (path.size () - 1) + 1)).poradieMiest;
+
+      String[] child = new String[parent1.length];
+      crossOver(parent1, parent2, child, 5);
+
+   }
+   public static void generateMutations(LinkedList<Path> path, LinkedList<Path> mutations)
+   {
+
+   }
+
+   public static void crossOver(String[] parent1, String[] parent2, String[] child, int pos)
+   {
+      String[] parentA = new String[parent1.length];
+      String[] parentB = new String[parent2.length];
+      memcpy (parent1, parentA);
+      memcpy (parent2, parentB);
+
+   //crossover from parent 1
+      for (int i = pos; i < parentA.length; i++)
+      {
+         child[i] = parentA[i];
+         int indexOf = Arrays.asList(parentB).indexOf(parentA[i]);
+         if(indexOf > 0 && indexOf < parentB.length);
+         {
+            parentB[indexOf] = "-1";
+         }
+
+      }
+
+      // crossover from parent2
+      int index = 0;
+      for (int j = 0; j < parentA.length; j++)
+      {
+         if (parentB[j] == "-1")
+         {
+            continue;
+         }
+
+         child[index] = parentB[j];
+         index++;
+      }
+
+   }
+
+   public static void memcpy(String [] a, String[] b)
+   {
+      // Copying elements of a[] to b[]
+      for (int i = 0; i < a.length; i++)
+         b[i] = a[i];
    }
 }
