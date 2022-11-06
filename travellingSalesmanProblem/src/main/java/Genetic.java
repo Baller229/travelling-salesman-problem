@@ -13,7 +13,7 @@ public class Genetic
       final int minCoord = 0;
       final int maxCoord = 200;
 
-   //generate cities with coordinations
+      //generate cities with coordinations
       generateCities (cities, minCoord, maxCoord);
 
       // store best path from generatedPaths
