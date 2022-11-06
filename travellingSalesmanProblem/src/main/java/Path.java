@@ -1,8 +1,8 @@
 public class Path
 {
    String poradieMiest[];
-   int cenaCesty;
-   public Path(String poradieMiest[], int cenaCesty)
+   double cenaCesty;
+   public Path(String poradieMiest[], double cenaCesty)
    {
       this.poradieMiest = poradieMiest;
       this.cenaCesty = cenaCesty;
