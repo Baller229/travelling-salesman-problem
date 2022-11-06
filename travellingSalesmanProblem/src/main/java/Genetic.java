@@ -1,7 +1,5 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class Genetic
 {
@@ -9,7 +7,7 @@ public class Genetic
    public static LinkedList<Path> paths = new LinkedList<Path> ();
    public static LinkedList<Path> crossoverPaths = new LinkedList<Path> ();
    public static LinkedList<Path> mutatedPaths = new LinkedList<Path> ();
-   public static LinkedList<Double> bestPaths = new LinkedList<Double> ();
+   public static Map< String, Double> BEST_PATHS = new HashMap<> ();
    public static void geneticAlgorithm()
    {
       final int minCoord = 0;
@@ -24,7 +22,7 @@ public class Genetic
       for(int i = 0; i < 100000; i++)
       {
          generation();
-         System.out.println (i + ": Path cost: " + bestPaths.get (0));
+
       }
 
    }
@@ -42,13 +40,15 @@ public class Genetic
             generateCrossover(paths, crossoverPaths);
             generateMutations (paths, mutatedPaths);
          }
-         bestPaths.add (storeBestPath(crossoverPaths));
-         bestPaths.add (storeBestPath(mutatedPaths));
-         Collections.sort (bestPaths);
-         Double best = bestPaths.getFirst ();
-         bestPaths = null;
-         bestPaths = new LinkedList<> ();
-         bestPaths.add (best);
+         storeBestPath(crossoverPaths);
+         storeBestPath(mutatedPaths);
+         String  key = getMinKey (BEST_PATHS);
+         Double value = BEST_PATHS.get (key);
+
+         System.out.println ("SEQUENCE: " + key + "  COST: " + value);
+         BEST_PATHS = null;
+         BEST_PATHS = new HashMap<> ();
+         BEST_PATHS.put (key, value);
          crossoverPaths = null;
          paths = null;
          mutatedPaths = null;
@@ -145,6 +145,7 @@ public class Genetic
       for (Path p : path)
       {
          min[i] = p.cenaCesty;
+         BEST_PATHS.put (Arrays.toString (p.poradieMiest), p.cenaCesty);
          i++;
       }
       Arrays.sort (min);
@@ -237,4 +238,9 @@ public class Genetic
       return cities.get (index);
    }
 
+   public static String getMinKey(Map<String, Double> map)
+   {
+      return map.entrySet().stream()
+      .min(Comparator.comparingDouble(Map.Entry::getValue)).get().getKey();
+   }
 }
