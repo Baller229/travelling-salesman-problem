@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Genetic
@@ -19,7 +18,7 @@ public class Genetic
       // store best path from generatedPaths
       //bestPaths.add (storeBestPath(paths));
 
-      for(int i = 0; i < 100000; i++)
+      for(int i = 0; i < 10000; i++)
       {
          generation();
 
@@ -61,7 +60,7 @@ public class Genetic
    {
       double currentCoordX;
       double currentCoordY;
-      for(int i = 0; i < 20; i++)
+      for(int i = 0; i < 40; i++)
       {
          currentCoordX = Math.random()*(max-min+1)+min;
          currentCoordY = Math.random()*(max-min+1)+min;
@@ -96,19 +95,19 @@ public class Genetic
          if( (i + 1) == shuffledCities.size ())
          {
 
-            pathCost += countPathCost(currentCity, startCity);  //count path cost when comming back to start city position
+            pathCost += currentPathCost (currentCity, startCity);  //count path cost when comming back to start city position
          }
          else
          {
             nextCity = shuffledCities.get(i+1);
-            pathCost += countPathCost(currentCity, nextCity); //count path cost when going from one city to another
+            pathCost += currentPathCost (currentCity, nextCity); //count path cost when going from one city to another
          }
       }
       //add shuffled path to list
       paths.add (new Path (currentCityPosition, pathCost));
    }
 
-   public static double countPathCost(City currCity, City nextCity)
+   public static double currentPathCost ( City currCity, City nextCity)
    {
       int diffX = Math.abs((int)(currCity.X - nextCity.X));
       int diffY = Math.abs((int)(currCity.Y - nextCity.Y));
@@ -126,13 +125,13 @@ public class Genetic
          if ((i + 1) == sequence.length)
          {
             currentCity = getCityfromIndex (Integer.parseInt (sequence[i]));
-            pathCost += countPathCost (currentCity, startCity);
+            pathCost += currentPathCost (currentCity, startCity);
          }
          else
          {
             currentCity = getCityfromIndex (Integer.parseInt (sequence[i]));
             nextCity = getCityfromIndex (Integer.parseInt (sequence[i+1]));
-            pathCost += countPathCost (currentCity, nextCity);
+            pathCost += currentPathCost (currentCity, nextCity);
          }
       }
       return pathCost;
@@ -157,7 +156,6 @@ public class Genetic
       String[] parent1;
       String[] parent2;
 
-
       //get random parent
       parent1 = path.get ((int)(Math.random() * (path.size () - 1) + 1)).poradieMiest;
       parent2 =path.get ((int)(Math.random() * (path.size () - 1) + 1)).poradieMiest;
@@ -168,7 +166,6 @@ public class Genetic
 
       Path childs = new Path (child, totalPathCost (child));
       crossover.add (childs);
-
    }
    public static void generateMutations(LinkedList<Path> path, LinkedList<Path> mutations)
    {
@@ -189,7 +186,7 @@ public class Genetic
       memcpy (parent1, parentA);
       memcpy (parent2, parentB);
 
-   //crossover from parent 1
+      //crossover from parent 1
       for (int i = pos; i < parentA.length; i++)
       {
          child[i] = parentA[i];
@@ -198,9 +195,7 @@ public class Genetic
          {
             parentB[indexOf] = "-1";
          }
-
       }
-
       // crossover from parent2
       int index = 0;
       for (int j = 0; j < parentA.length; j++)
@@ -209,11 +204,9 @@ public class Genetic
          {
             continue;
          }
-
          child[index] = parentB[j];
          index++;
       }
-
    }
 
    public static void memcpy(String a[], String b[])

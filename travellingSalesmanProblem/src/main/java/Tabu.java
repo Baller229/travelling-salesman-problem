@@ -29,35 +29,34 @@ public static void tabuSearch()
       String key = null;
       Double value = 0.0;
 
-      for (int i = 0; i < 1000000; i++)
+      for (int i = 0; i < 100000; i++)
       {
 
          if(key != null)
          {
             ALL_BEST_PATHS.put (key, value);
          }
-         generate();
+         generateFewPaths ();
          ALL_BEST_PATHS.put (getBestPathKey (), getBestPathValue ());
          Double localMinimum = 0.0;
-
          if(localMinimum == 0.0)
          {
             localMinimum = getBestPathValue ();
             ALL_BEST_PATHS.put (getBestPathKey (), getBestPathValue ());
-            generate();
+            generateFewPaths ();
 
          }
          if(localMinimum >= getBestPathValue ())
          {
             localMinimum = getBestPathValue ();
             ALL_BEST_PATHS.put (getBestPathKey (), getBestPathValue ());
-            generate();
+            generateFewPaths ();
          }
 
          if(localMinimum < getBestPathValue())
          {
-            TABU_PATHS.add (getBestPathValue ());
-            generate ();
+            TABU_PATHS.add (localMinimum);
+            generateFewPaths ();
          }
          if(!(ALL_BEST_PATHS.isEmpty ()))
          {
@@ -70,7 +69,7 @@ public static void tabuSearch()
       }
 
    }
-   public static void generate()
+   public static void generateFewPaths ()
    {
       BEST_PATH = null;
       PATHS = null;
@@ -132,29 +131,5 @@ public static void tabuSearch()
       // in the parameter returns the new hashmap
       // with the copied content of the original one
       return new HashMap<>(original);
-   }
-
-   // function to sort hashmap by values
-   public static HashMap<String, Double> sortByValue(Map<String, Double> hm)
-   {
-      // Create a list from elements of HashMap
-      List<Map.Entry<String, Double> > list =
-         new LinkedList<Map.Entry<String, Double> >(hm.entrySet());
-
-      // Sort the list
-      Collections.sort(list, new Comparator<Map.Entry<String, Double> >() {
-      public int compare(Map.Entry<String, Double> o1,
-                         Map.Entry<String, Double> o2)
-         {
-         return (o1.getValue()).compareTo(o2.getValue());
-         }
-      });
-
-      // put data from sorted list to hashmap
-      HashMap<String, Double> temp = new LinkedHashMap<String, Double>();
-      for (Map.Entry<String, Double> aa : list) {
-      temp.put(aa.getKey(), aa.getValue());
-      }
-      return temp;
    }
 }
